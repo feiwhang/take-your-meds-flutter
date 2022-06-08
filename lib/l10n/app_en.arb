@@ -6,6 +6,7 @@
     "addmedTitle": "Schedule med alert",
     "addmedNameTitle": "What is the name of this med?",
     "addmedTimeTitle": "What times do you want to take it?",
+    "addmedHowTitle": "Before, after or with meal?",
     "addmedFrequencyTitle": "How often is this med taken?",
     "addmedQuantityTitle": "How many taken each time?",
     "tabToTypeName": "Please fill med's name...",
@@ -35,6 +36,7 @@
     "timeExceed": "Maximum of 3 times per schedule",
     "errorNoName": "Please specify the med's name.",
     "errorNoTime": "Please select at least 1 time.",
+    "errorNoHow": "Please select how to take.",
     "errorNoDay": "Please select at least 1 day.",
     "pill": "pill",
     "pills": "pills",
@@ -42,5 +44,8 @@
     "onGoing": "On going",
     "sucess": "Success !",
     "changedLang": "Successfully changed language",
-    "addedMed": "Successfully added schedule"
+    "addedMed": "Successfully added schedule",
+    "beforeMeal": "Before meal",
+    "afterMeal": "After meal",
+    "withMeal": "With meal"
 }

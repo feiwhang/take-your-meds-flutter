@@ -19,21 +19,24 @@ class ScheduleAdapter extends TypeAdapter<Schedule> {
     return Schedule()
       ..medName = fields[0] as String
       ..timesToTake = (fields[1] as List).cast<TimeOfDay>()
-      ..daysToTake = (fields[2] as Map).cast<DaysOfTheWeek, bool>()
-      ..dose = fields[3] as int;
+      ..howToTake = fields[2] as HowToTake?
+      ..daysToTake = (fields[3] as Map).cast<DaysOfTheWeek, bool>()
+      ..dose = fields[4] as int;
   }
 
   @override
   void write(BinaryWriter writer, Schedule obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.medName)
       ..writeByte(1)
       ..write(obj.timesToTake)
       ..writeByte(2)
-      ..write(obj.daysToTake)
+      ..write(obj.howToTake)
       ..writeByte(3)
+      ..write(obj.daysToTake)
+      ..writeByte(4)
       ..write(obj.dose);
   }
 

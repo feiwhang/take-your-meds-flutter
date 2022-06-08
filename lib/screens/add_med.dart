@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:take_your_meds/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
+import 'package:take_your_meds/utils/how_to_take.dart';
 import 'package:take_your_meds/utils/schedule.dart';
 import 'package:take_your_meds/widgets/alert_dialog.dart';
 import 'package:take_your_meds/widgets/base_card.dart';
@@ -38,75 +39,52 @@ class AddMed extends StatelessWidget {
               AppLocalizations.of(context)!.addmedTitle,
               style: titleTextStyle,
             ),
-            const SizedBox(height: 42),
-            Row(
-              children: [
-                const Icon(
-                  Icons.medication_outlined,
-                  color: normalRedColor,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  AppLocalizations.of(context)!.addmedNameTitle,
-                  style: subtitleTextStyle,
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 32),
+            titleText(Icons.medication_outlined,
+                AppLocalizations.of(context)!.addmedNameTitle),
+            const SizedBox(height: 8),
             const SelectNameCard(),
-            const SizedBox(height: 42),
-            Row(
-              children: [
-                const Icon(
-                  Icons.schedule_outlined,
-                  color: normalRedColor,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  AppLocalizations.of(context)!.addmedTimeTitle,
-                  style: subtitleTextStyle,
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 30),
+            titleText(Icons.schedule_outlined,
+                AppLocalizations.of(context)!.addmedTimeTitle),
+            const SizedBox(height: 8),
             const SelectTimeCard(),
-            const SizedBox(height: 42),
-            Row(
-              children: [
-                const Icon(
-                  Icons.date_range_outlined,
-                  color: normalRedColor,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  AppLocalizations.of(context)!.addmedFrequencyTitle,
-                  style: subtitleTextStyle,
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 30),
+            titleText(Icons.numbers_outlined,
+                AppLocalizations.of(context)!.addmedHowTitle),
+            const SizedBox(height: 8),
+            const SelectHowCard(),
+            const SizedBox(height: 30),
+            titleText(Icons.date_range_outlined,
+                AppLocalizations.of(context)!.addmedFrequencyTitle),
+            const SizedBox(height: 8),
             const SelectFreqCard(),
-            const SizedBox(height: 42),
-            Row(
-              children: [
-                const Icon(
-                  Icons.numbers_outlined,
-                  color: normalRedColor,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  AppLocalizations.of(context)!.addmedQuantityTitle,
-                  style: subtitleTextStyle,
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 30),
+            titleText(Icons.numbers_outlined,
+                AppLocalizations.of(context)!.addmedQuantityTitle),
+            const SizedBox(height: 8),
             const SelectDoseCard(),
             const Expanded(child: SizedBox()),
             const ConfirmButton(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget titleText(IconData iconData, String title) {
+    return Row(
+      children: [
+        Icon(
+          iconData,
+          color: normalRedColor,
+        ),
+        const SizedBox(width: 6),
+        Text(
+          title,
+          style: subtitleTextStyle,
+        ),
+      ],
     );
   }
 }
@@ -192,7 +170,7 @@ class SelectTimeCard extends ConsumerWidget {
             Container(
               decoration: BoxDecoration(
                   color: Colors.white38,
-                  borderRadius: BorderRadius.circular(32)),
+                  borderRadius: BorderRadius.circular(30)),
               child: IconButton(
                 onPressed: () {
                   ref.read(newScheduleProvider.notifier).removeTimeToTake(time);
@@ -279,12 +257,69 @@ class SelectTimeModal extends ConsumerWidget {
   }
 }
 
+class SelectHowCard extends ConsumerWidget {
+  const SelectHowCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return BaseCard(
+      cardChild: IntrinsicHeight(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            expandedButton(context, ref, HowToTake.beforeMeal),
+            VerticalDivider(
+              color: Colors.grey.shade200,
+            ),
+            expandedButton(context, ref, HowToTake.afterMeal),
+            VerticalDivider(
+              color: Colors.grey.shade100,
+            ),
+            expandedButton(context, ref, HowToTake.withMeal),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget expandedButton(
+      BuildContext context, WidgetRef ref, HowToTake howToTake) {
+    Schedule scheduleValue = ref.watch(newScheduleProvider);
+
+    return Expanded(
+      flex: 1,
+      child: GestureDetector(
+        onTap: () {
+          ref.read(newScheduleProvider.notifier).pickHowToTake(howToTake);
+        },
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            gradient: scheduleValue.howToTake == howToTake
+                ? const LinearGradient(colors: [normalRedColor, darkRedColor])
+                : null,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            howToTake.getText(context),
+            style: scheduleValue.howToTake == howToTake
+                ? lightNormalTextStyle
+                : normalTextStyle,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SelectFreqCard extends ConsumerWidget {
   const SelectFreqCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Schedule scheduleValue = ref.watch(newScheduleProvider);
+
     return BaseCard(
       cardChild: ListTile(
         contentPadding: EdgeInsets.zero,
@@ -552,6 +587,11 @@ class ConfirmButton extends ConsumerWidget {
     if (scheduleValue.timesToTake.isEmpty) {
       errorMsg += "\n* ";
       errorMsg += AppLocalizations.of(context)!.errorNoTime;
+    }
+
+    if (scheduleValue.howToTake == null) {
+      errorMsg += "\n* ";
+      errorMsg += AppLocalizations.of(context)!.errorNoHow;
     }
 
     if (!scheduleValue.daysToTake.containsValue(true)) {

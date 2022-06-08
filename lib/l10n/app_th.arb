@@ -6,6 +6,7 @@
     "addmedTitle": "สร้างการแจ้งเตือน",
     "addmedNameTitle": "ชื่อตัวยา?",
     "addmedTimeTitle": "คุณต้องทานยาตัวนี้เวลาไหน?",
+    "addmedHowTitle": "ก่อน, หลัง หรือพร้อมอาหาร?",
     "addmedFrequencyTitle": "ต้องทานบ่อยแค่ไหน?",
     "addmedQuantityTitle": "ต้องทานครั้งละกี่เม็ด",
     "tabToTypeName": "กรุณาใส่ชื่อยา...",
@@ -35,6 +36,7 @@
     "timeExceed": "เลือกที่ไม่เกิน 3 เวลา",
     "errorNoName": "กรุณากรอกชื่อตัวยา",
     "errorNoTime": "กรุณาเลือกอย่างน้อย 1 เวลา",
+    "errorNoHow": "กรุณาเลือกวิธีีกิน",
     "errorNoDay": "กรุณาเลือกอย่างน้อย 1 วัน",
     "pill": "เม็ด",
     "pills": "เม็ด",
@@ -42,5 +44,8 @@
     "onGoing": "อยู่ระหว่าง",
     "sucess": "สำเร็จ !",
     "changedLang": "เปลี่ยนภาษาเรียบร้อย",
-    "addedMed": "เพิ่มการแจ้งเตือบเรียบร้อย"
+    "addedMed": "เพิ่มการแจ้งเตือบเรียบร้อย",
+    "beforeMeal": "ก่อนอาหาร",
+    "afterMeal": "หลังอาหาร",
+    "withMeal": "พร้อมอาหาร"
 }

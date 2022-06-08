@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
+import 'package:take_your_meds/utils/how_to_take.dart';
 import 'package:take_your_meds/widgets/alert_dialog.dart';
 
 part 'schedule.g.dart';
@@ -17,6 +18,9 @@ class Schedule extends HiveObject {
   List<TimeOfDay> timesToTake = [];
 
   @HiveField(2)
+  HowToTake? howToTake;
+
+  @HiveField(3)
   Map<DaysOfTheWeek, bool> daysToTake = {
     DaysOfTheWeek.sunday: false,
     DaysOfTheWeek.monday: false,
@@ -27,7 +31,7 @@ class Schedule extends HiveObject {
     DaysOfTheWeek.saturday: false,
   };
 
-  @HiveField(3)
+  @HiveField(4)
   int dose = 1;
 }
 
@@ -75,6 +79,13 @@ class ScheduleNotifier extends StateNotifier<Schedule> {
 
     Schedule newSchedule = copySchedule;
     newSchedule.timesToTake.remove(time);
+
+    state = newSchedule;
+  }
+
+  void pickHowToTake(HowToTake howToTake) {
+    Schedule newSchedule = copySchedule;
+    newSchedule.howToTake = howToTake;
 
     state = newSchedule;
   }
