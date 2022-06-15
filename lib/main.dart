@@ -8,6 +8,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:take_your_meds/screens/dashboard.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
+import 'package:take_your_meds/utils/how_to_take.dart';
 import 'package:take_your_meds/utils/schedule.dart';
 
 void main() async {
@@ -16,6 +17,7 @@ void main() async {
 
   Hive.registerAdapter(ScheduleAdapter());
   Hive.registerAdapter(TimeOfDayAdapter());
+  Hive.registerAdapter(HowToTakeAdapter());
   Hive.registerAdapter(DaysOfTheWeekAdapter());
 
   Box settingBox = await Hive.openBox('settings');
@@ -23,7 +25,7 @@ void main() async {
 
   // setup default locale based on device
   if (settingBox.get('localeName') == null) {
-    await settingBox.put('localeName', Platform.localeName);
+    await settingBox.put('localeName', Platform.localeName.substring(0, 2));
   }
 
   runApp(

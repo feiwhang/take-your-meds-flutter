@@ -47,5 +47,6 @@
     "addedMed": "Successfully added schedule",
     "beforeMeal": "Before meal",
     "afterMeal": "After meal",
-    "withMeal": "With meal"
+    "withMeal": "With meal",
+    "errorConvertToCurrent": "Failed to convert schedule to current"
 }

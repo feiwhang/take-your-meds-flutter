@@ -15,7 +15,7 @@ class Schedule extends HiveObject {
   String medName = "";
 
   @HiveField(1)
-  List<TimeOfDay> timesToTake = [];
+  Map<TimeOfDay, bool> timesToTake = {};
 
   @HiveField(2)
   HowToTake? howToTake;
@@ -42,13 +42,14 @@ class ScheduleNotifier extends StateNotifier<Schedule> {
     Schedule newSchedule = Schedule();
     newSchedule.medName = state.medName;
     newSchedule.timesToTake = state.timesToTake;
+    newSchedule.howToTake = state.howToTake;
     newSchedule.daysToTake = state.daysToTake;
     newSchedule.dose = state.dose;
     return newSchedule;
   }
 
   void addTimeToTake(TimeOfDay time, BuildContext context) {
-    if (state.timesToTake.contains(time)) {
+    if (state.timesToTake.keys.contains(time)) {
       showDialog(
         context: context,
         builder: (context) => TheAlertDialog(
@@ -67,15 +68,13 @@ class ScheduleNotifier extends StateNotifier<Schedule> {
 
     Schedule newSchedule = copySchedule;
 
-    newSchedule.timesToTake.add(time);
-    newSchedule.timesToTake
-        .sort(((a, b) => a.toString().compareTo(b.toString())));
+    newSchedule.timesToTake[time] = false;
 
     state = newSchedule;
   }
 
   void removeTimeToTake(TimeOfDay time) {
-    if (!state.timesToTake.contains(time)) return;
+    if (!state.timesToTake.keys.contains(time)) return;
 
     Schedule newSchedule = copySchedule;
     newSchedule.timesToTake.remove(time);
@@ -133,3 +132,5 @@ DateTime getDateTime(TimeOfDay t) {
   final dt = DateTime.now();
   return DateTime(dt.year, dt.month, dt.day, t.hour, t.minute);
 }
+
+String tdStr = DateFormat.yMd().format(DateTime.now());

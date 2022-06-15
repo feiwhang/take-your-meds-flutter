@@ -47,5 +47,6 @@
     "addedMed": "เพิ่มการแจ้งเตือบเรียบร้อย",
     "beforeMeal": "ก่อนอาหาร",
     "afterMeal": "หลังอาหาร",
-    "withMeal": "พร้อมอาหาร"
+    "withMeal": "พร้อมอาหาร",
+    "errorConvertToCurrent": "เกิดข้อผิดพลาดในการ convert"
 }

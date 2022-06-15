@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:take_your_meds/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:take_your_meds/main.dart';
 import 'package:take_your_meds/widgets/success_dialog.dart';
 
 class Settings extends ConsumerWidget {

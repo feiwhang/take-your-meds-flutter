@@ -6,9 +6,9 @@ import 'package:take_your_meds/screens/add_med.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:take_your_meds/screens/settings.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
+import 'package:take_your_meds/utils/db_helper.dart';
 import 'package:take_your_meds/utils/schedule.dart';
 import 'package:take_your_meds/widgets/base_card.dart';
-import 'package:take_your_meds/widgets/gradient_pill.dart';
 
 final dashDtProvider = StateProvider<DateTime>((ref) {
   DateTime now = DateTime.now();
@@ -30,11 +30,12 @@ class Dashboard extends StatelessWidget {
             valueListenable: Hive.box<Schedule>("schedules").listenable(),
             builder: (context, Box<Schedule> schedulesBox, _) {
               return ListView(
-                  children: <Widget>[
-                        const DashboardHero(),
-                        const SizedBox(height: 30),
-                      ] +
-                      scheduleWidgets(context, schedulesBox));
+                children: <Widget>[
+                      const DashboardHero(),
+                      const SizedBox(height: 30),
+                    ] +
+                    scheduleWidgets(context, schedulesBox),
+              );
             },
           ),
         ),
@@ -62,26 +63,7 @@ class Dashboard extends StatelessWidget {
 
   List<Widget> scheduleWidgets(
       BuildContext context, Box<Schedule> schedulesBox) {
-    final scheduleTd = schedulesBox.values.where((Schedule schedule) =>
-        schedule.daysToTake[DaysOfTheWeek.values[DateTime.now().weekday - 1]]!);
-
-    if (scheduleTd.isEmpty) {
-      return [
-        SizedBox(
-          width: double.infinity,
-          child: BaseCard(
-            cardChild: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Center(
-                  child: Text(
-                AppLocalizations.of(context)!.noSchedule,
-                style: normalTextStyle,
-              )),
-            ),
-          ),
-        )
-      ];
-    }
+    final scheduleTd = DatabaseHelper.instance.getSchedulesToday();
 
     return List.generate(
       scheduleTd.length,
@@ -176,7 +158,7 @@ class DashboardSchedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDone = schedule.timesToTake.every(
+    bool isDone = schedule.timesToTake.keys.every(
       (element) => getDateTime(element).compareTo(DateTime.now()) <= 0,
     );
 
@@ -186,67 +168,55 @@ class DashboardSchedule extends StatelessWidget {
           bgColor: isDone ? lightestGreenColor : lightRedColor,
           cardChild: Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      schedule.medName,
-                      style: headerTextStyle,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          schedule.medName,
+                          style: headerTextStyle,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "${schedule.dose} ${schedule.dose > 1 ? AppLocalizations.of(context)!.pills : AppLocalizations.of(context)!.pill} ${schedule.howToTake!.getText(context).toLowerCase()}",
+                          style: normalTextStyle,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "${schedule.dose} ${schedule.dose > 1 ? AppLocalizations.of(context)!.pills : AppLocalizations.of(context)!.pill}",
-                      style: normalTextStyle,
-                    ),
-                    const SizedBox(height: 16),
-                    timePills()
-                  ],
-                ),
-                Column(
-                  children: [
-                    Icon(
-                      isDone
-                          ? Icons.check_circle_outline
-                          : Icons.schedule_outlined,
-                      color: isDone ? lightGreenColor : normalRedColor,
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      isDone
-                          ? AppLocalizations.of(context)!.done
-                          : AppLocalizations.of(context)!.onGoing,
-                      style: normalTextStyle,
+                    Column(
+                      children: [
+                        Icon(
+                          isDone
+                              ? Icons.check_circle_outline
+                              : Icons.schedule_outlined,
+                          color: isDone ? lightGreenColor : normalRedColor,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          isDone
+                              ? AppLocalizations.of(context)!.done
+                              : AppLocalizations.of(context)!.onGoing,
+                          style: normalTextStyle,
+                        )
+                      ],
                     )
                   ],
-                )
+                ),
               ],
             ),
           )),
     );
   }
 
-  Widget timePills() {
-    return Row(
-      children: List.generate(schedule.timesToTake.length, (index) {
-        DateTime dt = getDateTime(schedule.timesToTake[index]);
-        bool isDtPassed = dt.compareTo(DateTime.now()) <= 0;
-
-        return Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GradientPill(
-            lightGradient: isDtPassed ? Colors.grey.shade400 : normalRedColor,
-            darkGradient: isDtPassed ? Colors.grey.shade500 : darkRedColor,
-            pillChild: Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(timeFormat.format(dt), style: lightNormalTextStyle),
-            ),
-          ),
-        );
-      }),
+  Widget timeList(TimeOfDay time) {
+    return ListTile(
+      leading: Checkbox(
+          value: schedule.timesToTake[time], onChanged: (bool? isTaken) {}),
     );
   }
 }

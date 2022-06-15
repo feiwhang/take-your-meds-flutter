@@ -2,16 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:take_your_meds/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
+import 'package:take_your_meds/utils/db_helper.dart';
 import 'package:take_your_meds/utils/how_to_take.dart';
 import 'package:take_your_meds/utils/schedule.dart';
 import 'package:take_your_meds/widgets/alert_dialog.dart';
 import 'package:take_your_meds/widgets/base_card.dart';
 import 'package:take_your_meds/widgets/gradient_pill.dart';
-import 'package:take_your_meds/widgets/success_dialog.dart';
 
 class AddMed extends StatelessWidget {
   const AddMed({Key? key}) : super(key: key);
@@ -127,7 +126,7 @@ class SelectTimeCard extends ConsumerWidget {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: selectedTimePill(
                       context,
-                      schedule.timesToTake[index],
+                      schedule.timesToTake.keys.elementAt(index),
                       ref,
                     ),
                   ),
@@ -533,31 +532,7 @@ class ConfirmButton extends ConsumerWidget {
             String errorMsg = validateSchedule(context, ref);
 
             if (errorMsg.isEmpty) {
-              final schedulesBox = Hive.box<Schedule>("schedules");
-
-              try {
-                schedulesBox.add(scheduleValue).then((_) {
-                  Navigator.of(context).pop(true);
-
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        Future.delayed(const Duration(seconds: 2), () {
-                          Navigator.of(context).pop(true);
-                        });
-
-                        return SuccessDialog(
-                            successDescription:
-                                AppLocalizations.of(context)!.addedMed);
-                      });
-                });
-              } catch (e) {
-                showDialog(
-                  context: context,
-                  builder: (context) =>
-                      TheAlertDialog(errorDescription: e.toString()),
-                );
-              }
+              DatabaseHelper.instance.addNewMedSchedule(scheduleValue, context);
             } else {
               showDialog(
                 context: context,
