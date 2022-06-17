@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:take_your_meds/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:take_your_meds/utils/date_time_helper.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
 import 'package:take_your_meds/utils/db_helper.dart';
 import 'package:take_your_meds/utils/how_to_take.dart';
@@ -126,7 +127,7 @@ class SelectTimeCard extends ConsumerWidget {
                     padding: const EdgeInsets.only(right: 8.0),
                     child: selectedTimePill(
                       context,
-                      schedule.timesToTake.keys.elementAt(index),
+                      schedule.timesToTake.elementAt(index),
                       ref,
                     ),
                   ),

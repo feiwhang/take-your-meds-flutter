@@ -5,6 +5,7 @@ import 'package:take_your_meds/constants.dart';
 import 'package:take_your_meds/screens/add_med.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:take_your_meds/screens/settings.dart';
+import 'package:take_your_meds/utils/date_time_helper.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
 import 'package:take_your_meds/utils/db_helper.dart';
 import 'package:take_your_meds/utils/schedule.dart';
@@ -158,7 +159,7 @@ class DashboardSchedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDone = schedule.timesToTake.keys.every(
+    bool isDone = schedule.timesToTake.every(
       (element) => getDateTime(element).compareTo(DateTime.now()) <= 0,
     );
 
@@ -210,13 +211,6 @@ class DashboardSchedule extends StatelessWidget {
               ],
             ),
           )),
-    );
-  }
-
-  Widget timeList(TimeOfDay time) {
-    return ListTile(
-      leading: Checkbox(
-          value: schedule.timesToTake[time], onChanged: (bool? isTaken) {}),
     );
   }
 }

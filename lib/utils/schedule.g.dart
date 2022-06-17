@@ -18,7 +18,7 @@ class ScheduleAdapter extends TypeAdapter<Schedule> {
     };
     return Schedule()
       ..medName = fields[0] as String
-      ..timesToTake = (fields[1] as Map).cast<TimeOfDay, bool>()
+      ..timesToTake = (fields[1] as List).cast<TimeOfDay>()
       ..howToTake = fields[2] as HowToTake?
       ..daysToTake = (fields[3] as Map).cast<DaysOfTheWeek, bool>()
       ..dose = fields[4] as int;

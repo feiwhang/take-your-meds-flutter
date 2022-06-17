@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
 import 'package:take_your_meds/utils/how_to_take.dart';
@@ -15,21 +14,14 @@ class Schedule extends HiveObject {
   String medName = "";
 
   @HiveField(1)
-  Map<TimeOfDay, bool> timesToTake = {};
+  List<TimeOfDay> timesToTake = [];
 
   @HiveField(2)
   HowToTake? howToTake;
 
   @HiveField(3)
-  Map<DaysOfTheWeek, bool> daysToTake = {
-    DaysOfTheWeek.sunday: false,
-    DaysOfTheWeek.monday: false,
-    DaysOfTheWeek.tuesday: false,
-    DaysOfTheWeek.wednesday: false,
-    DaysOfTheWeek.thursday: false,
-    DaysOfTheWeek.friday: false,
-    DaysOfTheWeek.saturday: false,
-  };
+  Map<DaysOfTheWeek, bool> daysToTake =
+      Map.fromIterables(DaysOfTheWeek.values, List.generate(7, (_) => false));
 
   @HiveField(4)
   int dose = 1;
@@ -49,7 +41,7 @@ class ScheduleNotifier extends StateNotifier<Schedule> {
   }
 
   void addTimeToTake(TimeOfDay time, BuildContext context) {
-    if (state.timesToTake.keys.contains(time)) {
+    if (state.timesToTake.contains(time)) {
       showDialog(
         context: context,
         builder: (context) => TheAlertDialog(
@@ -67,14 +59,15 @@ class ScheduleNotifier extends StateNotifier<Schedule> {
     }
 
     Schedule newSchedule = copySchedule;
-
-    newSchedule.timesToTake[time] = false;
+    newSchedule.timesToTake.add(time);
+    newSchedule.timesToTake
+        .sort(((a, b) => a.toString().compareTo(b.toString())));
 
     state = newSchedule;
   }
 
   void removeTimeToTake(TimeOfDay time) {
-    if (!state.timesToTake.keys.contains(time)) return;
+    if (!state.timesToTake.contains(time)) return;
 
     Schedule newSchedule = copySchedule;
     newSchedule.timesToTake.remove(time);
@@ -123,14 +116,3 @@ final newScheduleProvider =
     StateNotifierProvider.autoDispose<ScheduleNotifier, Schedule>((ref) {
   return ScheduleNotifier();
 });
-
-DateFormat timeFormat = DateFormat.Hm();
-
-DateFormat dateFormat(String localeName) => DateFormat.MMMMd(localeName);
-
-DateTime getDateTime(TimeOfDay t) {
-  final dt = DateTime.now();
-  return DateTime(dt.year, dt.month, dt.day, t.hour, t.minute);
-}
-
-String tdStr = DateFormat.yMd().format(DateTime.now());

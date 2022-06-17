@@ -10,6 +10,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper();
 
   static final Box _schedulesBox = Hive.box<Schedule>("schedules");
+  static final Box _todaySchedulesBox = Hive.box<Schedule>("todaySchedules");
 
   Future<void> addNewMedSchedule(
       Schedule schedule, BuildContext context) async {
@@ -44,5 +45,11 @@ class DatabaseHelper {
         .where((Schedule schedule) => schedule
             .daysToTake[DaysOfTheWeek.values[DateTime.now().weekday - 1]]!)
         .toList();
+  }
+
+  void addAllTodaySchedule(List<Schedule> schedules) {
+    for (Schedule schedule in schedules) {
+      if (!_todaySchedulesBox.containsKey(schedule.medName)) {}
+    }
   }
 }
