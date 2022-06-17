@@ -22,7 +22,6 @@ void main() async {
 
   Box settingBox = await Hive.openBox('settings');
   await Hive.openBox<Schedule>('schedules');
-  await Hive.openBox('todaySchedules');
 
   // setup default locale based on device
   if (settingBox.get('localeName') == null) {

@@ -31,9 +31,7 @@ class AddMed extends StatelessWidget {
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: layoutPadding),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
           children: [
             Text(
               AppLocalizations.of(context)!.addmedTitle,
@@ -65,6 +63,7 @@ class AddMed extends StatelessWidget {
             const SizedBox(height: 8),
             const SelectDoseCard(),
             const Expanded(child: SizedBox()),
+            const SizedBox(height: 42),
             const ConfirmButton(),
           ],
         ),
@@ -293,7 +292,7 @@ class SelectHowCard extends ConsumerWidget {
           ref.read(newScheduleProvider.notifier).pickHowToTake(howToTake);
         },
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             gradient: scheduleValue.howToTake == howToTake
@@ -303,6 +302,8 @@ class SelectHowCard extends ConsumerWidget {
           ),
           child: Text(
             howToTake.getText(context),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: scheduleValue.howToTake == howToTake
                 ? lightNormalTextStyle
                 : normalTextStyle,
@@ -533,7 +534,8 @@ class ConfirmButton extends ConsumerWidget {
             String errorMsg = validateSchedule(context, ref);
 
             if (errorMsg.isEmpty) {
-              DatabaseHelper.instance.addNewMedSchedule(scheduleValue, context);
+              await DatabaseHelper.instance
+                  .addNewMedSchedule(scheduleValue, context);
             } else {
               showDialog(
                 context: context,

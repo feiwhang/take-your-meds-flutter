@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:take_your_meds/utils/date_time_helper.dart';
 import 'package:take_your_meds/utils/days_of_the_week.dart';
 import 'package:take_your_meds/utils/schedule.dart';
 import 'package:take_your_meds/widgets/alert_dialog.dart';
@@ -10,8 +12,8 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper();
 
   static final Box _schedulesBox = Hive.box<Schedule>("schedules");
-  static final Box _todaySchedulesBox = Hive.box<Schedule>("todaySchedules");
 
+  // add new schedule to the schedules Box
   Future<void> addNewMedSchedule(
       Schedule schedule, BuildContext context) async {
     try {
@@ -37,6 +39,8 @@ class DatabaseHelper {
     }
   }
 
+  // get all today's schedule
+  // schedule that consist of today's day of the week
   List<Schedule> getSchedulesToday() {
     List<Schedule> allSchedules =
         _schedulesBox.values.toList() as List<Schedule>;
@@ -45,11 +49,5 @@ class DatabaseHelper {
         .where((Schedule schedule) => schedule
             .daysToTake[DaysOfTheWeek.values[DateTime.now().weekday - 1]]!)
         .toList();
-  }
-
-  void addAllTodaySchedule(List<Schedule> schedules) {
-    for (Schedule schedule in schedules) {
-      if (!_todaySchedulesBox.containsKey(schedule.medName)) {}
-    }
   }
 }
